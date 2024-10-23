@@ -77,7 +77,22 @@ contract LiquidityPool {
         token0.transfer(msg.sender, amount0);
         token1.transfer(msg.sender, amount1);
     }
-    
+
+    // Function to get current liquidity in the pool
+    function getCurrentLiquidity()
+        external
+        view
+        returns (
+            uint256 currentReserve0,
+            uint256 currentReserve1,
+            uint256 currentTotalLiquidity
+        )
+    {
+        currentReserve0 = reserve0; // Reserve of Token A
+        currentReserve1 = reserve1; // Reserve of Token B
+        currentTotalLiquidity = totalLiquidity; // Total liquidity in the pool
+    }
+
     // Utility functions
     function sqrt(uint y) internal pure returns (uint z) {
         if (y > 3) {
