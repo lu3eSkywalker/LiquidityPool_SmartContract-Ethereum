@@ -1,26 +1,25 @@
 import React from "react";
 import { useState } from "react";
 import { ethers } from "ethers";
+import { MetaMaskInpageProvider } from "@metamask/providers";
 
 declare global {
   interface Window {
-    ethereum: any;
+    ethereum: MetaMaskInpageProvider;
   }
 }
 
 const AddLiquidity = () => {
-  const [contractAddress, setContractAddress] = useState<string>(
-    "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-  );
 
-  const [tokenAQuantity, setTokenAQuantity] = useState<number>(0);
-  const [tokenBQuantity, setTokenBQuantity] = useState<number>(0);
+  const [tokenAQuantity, setTokenAQuantity] = useState<string>("");
+  const [tokenBQuantity, setTokenBQuantity] = useState<string>("");
 
   const [liquidityAdded, setLiquidityAdded] = useState<string>("");
 
   const [loadingBar, setLoadingBar] = useState<boolean>(false);
 
   const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL;
+  const contractAddress = "0x6824103731A6e30868AfDE9b8D4f9a9DF4ec2Fea";
 
   const ABI = [
     "function addLiquidity(uint256, uint256) external returns (uint256)",
@@ -28,7 +27,7 @@ const AddLiquidity = () => {
 
   const provider = new ethers.JsonRpcProvider(RPC_URL);
   const contractAdd = new ethers.Contract(
-    contractAddress || "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    contractAddress || "0x6824103731A6e30868AfDE9b8D4f9a9DF4ec2Fea",
     ABI,
     provider
   );
@@ -42,10 +41,13 @@ const AddLiquidity = () => {
 
         const contract = new ethers.Contract(contractAdd || "", ABI, signer);
 
+        const weiToEth = ethers.parseUnits(tokenAQuantity, 18);
+        const weiToEth2 = ethers.parseUnits(tokenBQuantity, 18);
+
         setLoadingBar(true);
         const sendTokens = await contract.addLiquidity(
-          tokenAQuantity,
-          tokenBQuantity
+          weiToEth,
+          weiToEth2
         );
         setLoadingBar(false);
         console.log(sendTokens);
@@ -57,7 +59,7 @@ const AddLiquidity = () => {
         if (res.status == 1) {
           setLiquidityAdded("Transaction Successful");
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error("Error Adding liquidity", error);
         alert(
           "An error occurred while adding liquidity. Check console for details."
@@ -80,7 +82,7 @@ const AddLiquidity = () => {
                   className="grow"
                   type="number"
                   placeholder="Token A Quantity"
-                  onChange={(e) => setTokenAQuantity(parseInt(e.target.value))}
+                  onChange={(e) => setTokenAQuantity(e.target.value)}
                 />
               </label>
 
@@ -92,7 +94,7 @@ const AddLiquidity = () => {
                   className="grow"
                   type="number"
                   placeholder="Token B Quantity"
-                  onChange={(e) => setTokenBQuantity(parseInt(e.target.value))}
+                  onChange={(e) => setTokenBQuantity(e.target.value)}
                 />
               </label>
             </div>
@@ -127,6 +129,9 @@ const AddLiquidity = () => {
       
       <div className="text-center text-gray-700 font-medium h-[200px] bg-gray-200">
         <ul className="steps text-xl">
+        <li className="step step-primary">
+            <a href="./approvetokens">Approve Tokens</a>
+          </li>
           <li className="step step-primary">
             <a href="./addliquidity">Add Liquidity</a>
           </li>

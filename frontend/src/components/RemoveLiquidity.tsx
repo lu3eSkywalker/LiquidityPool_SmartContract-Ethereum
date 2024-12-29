@@ -1,24 +1,23 @@
 import React from "react";
 import { useState } from "react";
 import { ethers } from "ethers";
+import { MetaMaskInpageProvider } from "@metamask/providers";
 
 declare global {
   interface Window {
-    ethereum: any;
+    ethereum: MetaMaskInpageProvider;
   }
 }
 
 const RemoveLiquidity = () => {
-  const [contractAddress, setContractAddress] = useState<string>(
-    "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-  );
 
-  const [liquidityToRemove, setLiquidityToRemove] = useState<number>(0);
+  const [liquidityToRemove, setLiquidityToRemove] = useState<string>("");
   const [liquidityRemoved, setLiquidityRemoved] = useState<string>("");
 
   const [loadingBar, setLoadingBar] = useState<boolean>(false);
 
   const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL;
+  const contractAddress = "0x6824103731A6e30868AfDE9b8D4f9a9DF4ec2Fea";
 
   const ABI = [
     "function removeLiquidity(uint256) external returns (uint256, uint256)",
@@ -26,7 +25,7 @@ const RemoveLiquidity = () => {
 
   const provider = new ethers.JsonRpcProvider(RPC_URL);
   const contractAdd = new ethers.Contract(
-    contractAddress || "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    contractAddress || "0x6824103731A6e30868AfDE9b8D4f9a9DF4ec2Fea",
     ABI,
     provider
   );
@@ -40,8 +39,10 @@ const RemoveLiquidity = () => {
 
         const contract = new ethers.Contract(contractAdd || "", ABI, signer);
 
+        const weiToEth = ethers.parseUnits(liquidityToRemove, 18);
+
         const removeLiquidityFromPool = await contract.removeLiquidity(
-          liquidityToRemove
+          weiToEth
         );
 
         setLoadingBar(true);
@@ -52,7 +53,7 @@ const RemoveLiquidity = () => {
           setLiquidityRemoved("Transaction Successful");
         }
         console.log(removeLiquidityFromPool);
-      } catch (error: any) {
+      } catch (error) {
         console.error("Error removing liquidity", error);
         alert(
           "An error occurred while removing the liquidity. Check console for details."
@@ -76,7 +77,7 @@ const RemoveLiquidity = () => {
                     type="number"
                     placeholder="Liquidity"
                     onChange={(e) =>
-                      setLiquidityToRemove(parseInt(e.target.value))
+                      setLiquidityToRemove(e.target.value)
                     }
                   />
                 </label>
@@ -88,7 +89,7 @@ const RemoveLiquidity = () => {
               className="w-full p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 font-bold text-xl"
               onClick={() => removeLiquidity()}
             >
-              Add Liquidity
+              Remove Liquidity
             </button>
 
             <br />
@@ -112,6 +113,9 @@ const RemoveLiquidity = () => {
 
       <div className="text-center text-gray-700 font-medium h-[200px] bg-gray-200">
         <ul className="steps text-xl">
+        <li className="step step-primary">
+            <a href="./approvetokens">Approve Tokens</a>
+          </li>
           <li className="step step-primary">
             <a href="./addliquidity">Add Liquidity</a>
           </li>

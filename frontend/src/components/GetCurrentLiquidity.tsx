@@ -1,10 +1,11 @@
 import React from "react";
 import { useState } from "react";
 import { ethers } from "ethers";
+import { MetaMaskInpageProvider } from "@metamask/providers";
 
 declare global {
   interface Window {
-    ethereum: any;
+    ethereum: MetaMaskInpageProvider;
   }
 }
 
@@ -16,6 +17,8 @@ const GetCurrentLiquidity = () => {
   const [tokenAReserve, setTokenAReserve] = useState<number>(0);
   const [tokenBReserve, setTokenBReserve] = useState<number>(0);
   const [remainingTotalLiquidity, setRemainingTotalLiquidity] = useState<number>(0);
+
+  const weiToETH = 10 ** 18;
 
   const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL;
 
@@ -34,12 +37,12 @@ const GetCurrentLiquidity = () => {
         console.log(getLiquidity[1]);
         console.log(getLiquidity[2]);
 
-        setTokenAReserve(parseInt(getLiquidity[0]));
-        setTokenBReserve(parseInt(getLiquidity[1]));
-        setRemainingTotalLiquidity(parseInt(getLiquidity[2]));
+        setTokenAReserve(parseInt(getLiquidity[0]) / weiToETH);
+        setTokenBReserve(parseInt(getLiquidity[1]) / weiToETH);
+        setRemainingTotalLiquidity(parseInt(getLiquidity[2]) / weiToETH);
 
     }
-    catch (error: any) {
+    catch (error) {
         console.error("Error Adding liquidity", error); 
     }
   }
