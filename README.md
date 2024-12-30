@@ -1,9 +1,12 @@
 # Liquidity Pool Smart Contract
 This project provides a simple Liquidity Pool contract written in Solidity, enabling the creation of liquidity pools and the issuance of Liquidity Pool Tokens (LST) when liquidity is provided. The contract supports:
 
-### Adding Liquidity: Users can provide liquidity and receive LST tokens in return.
-### Removing Liquidity: Users can redeem LST tokens to remove their liquidity.
-### Current Liquidity Tracking: View the current liquidity of the contract.
+### Adding Liquidity: 
+Users can provide liquidity and receive LST tokens in return.
+### Removing Liquidity: 
+Users can redeem LST tokens to remove their liquidity.
+### Current Liquidity Tracking: 
+View the current liquidity of the contract.
 Additionally, a frontend interface is provided for seamless interaction with the smart contract.
 
 ## Getting Started
